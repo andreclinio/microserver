@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
-    "dev": "nodemon --watch \"src\" --exec \"ts-node src/entry.ts\" -e ts",
+    "dev": "nodemon --watch \"src\" --exec \"ts-node src/main.ts\" -e ts",
     "build": "tsc",
-    "prod": "npm run build && node dist/entry.js"
+    "prod": "npm run build && node dist/main.js"
   },
   "repository": {
     "type": "git",

@@ -1,12 +1,16 @@
 
 import * as mongoose from "mongoose";
 
-class MongoService {
+import { MiaServer } from "../../server.class";
+import { MiaService } from "../service.class";
+
+class MongoService<T extends MiaServer> extends MiaService<T> {
 
     private uri:string; 
     private connection: mongoose.Connection | undefined;
 
-    constructor(uri: string) {
+    constructor(name: string, server: T, uri: string) {
+        super(name, server);
         this.uri = uri;
     }
     

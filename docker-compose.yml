@@ -1,0 +1,27 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    container_name: "microauth-mongo"
+    restart: "always"
+    volumes:
+      - ./.dbcache/mongo/data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    networks:
+      - backend
+
+  redis:
+    image: redis:6.0-alpine
+    container_name: "microauth-redis"
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"

@@ -14,15 +14,27 @@ class MiaContext<T extends MiaServer> {
         this.id = id;
     }
 
-    public log(message: string) : void {
+    public getServer(): T {
+        return this.server;
+    }
+
+    public getRoute(): MiaRoute<T> {
+        return this.route;
+    }
+
+    public getId(): string {
+        return this.id;
+    }
+
+    public log(message: string): void {
         this._log("--", message);
     }
 
     public _log(flag: string, message: string): void {
         const name = this.route.getName();
-        this.server.log(` [${name}]: (${flag} ${this.id})` + message);
+        this.server.log(` [${name}]: (${flag} ${this.id}) - ` + message);
     }
 
 }
 
-export {MiaContext};
+export { MiaContext };

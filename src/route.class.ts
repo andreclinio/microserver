@@ -48,7 +48,7 @@ abstract class MiaRoute<T extends MiaServer> {
     }
 
 
-    public abstract handle(context: MiaContext<T>, req: Request, res: Response): void;
+    public abstract handle(context: MiaContext<T>, req: Request, res: Response) : void;
 
 }
 

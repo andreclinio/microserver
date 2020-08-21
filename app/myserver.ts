@@ -1,0 +1,30 @@
+import { MiaServer } from "../src/server.class";
+import { MyMongoService } from "./mymongo.service";
+import { MyAuthenticationService } from "./myauthentication.service";
+import { MyUserService } from "./myuser.service";
+
+class MyServer extends MiaServer {
+
+    constructor() {
+        super("myserver", 4000);
+        const mongoservice = new MyMongoService(this);
+        this.addService(mongoservice);
+        
+        this.addService(new MyAuthenticationService(this));
+        this.addService(new MyUserService(this, mongoservice));
+    }
+
+    public getMyMongoService() : MyMongoService {
+        return (this.getServiceByName(MyMongoService.getName()) as MyMongoService);
+    }
+
+    public getMyAuthenticationService() : MyAuthenticationService {
+        return (this.getServiceByName(MyAuthenticationService.getName()) as MyAuthenticationService);
+    }
+
+    public getMyUserService() : MyUserService {
+        return (this.getServiceByName(MyUserService.getName()) as MyUserService);
+    }
+};
+
+export { MyServer };

@@ -11,7 +11,7 @@ class PingRoute<T extends MiaServer> extends MiaRoute<T> {
         super("pingroute", MiaRouteType.GET, "/ping");
     }
 
-    public handle(_context : MiaContext<T>, _request: Request, response: Response) : void {
+    public async handle(_context : MiaContext<T>, _request: Request, response: Response) : Promise<void> {
         response.send("pong\n");
     }
 }

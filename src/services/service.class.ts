@@ -1,6 +1,6 @@
 import { MiaServer } from "../server.class";
 
-class MiaService<T extends MiaServer> {
+abstract class MiaService<T extends MiaServer> {
 
     private server: T;
     private name: string;
@@ -21,6 +21,8 @@ class MiaService<T extends MiaServer> {
     public log(message: string) {
         this.server.log(`<service ${this.name}> ${message}`);
     }
+
+    public abstract start() : void;
 }
 
 export {MiaService};

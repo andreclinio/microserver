@@ -11,5 +11,5 @@ export const LoginSchema = new mongoose.Schema({
     somethingElse: Number,
   });
   
-const Login = mongoose.model<ILogin>('Login', LoginSchema);
-export default Login;
+const LoginModel = mongoose.model<ILogin>('Login', LoginSchema);
+export default LoginModel;

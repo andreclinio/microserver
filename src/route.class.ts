@@ -12,9 +12,9 @@ enum MiaRouteType {
 
 abstract class MiaRoute<T extends MiaServer> {
 
-    private type: MiaRouteType;
-    private path: string;
-    private name: string;
+    readonly type!: MiaRouteType;
+    readonly path!: string;
+    readonly name!: string;
 
     constructor(name: string, type: MiaRouteType, path: string) {
         this.type = type;
@@ -22,33 +22,23 @@ abstract class MiaRoute<T extends MiaServer> {
         this.name = !name ? "unamed" : name;
     }
 
-    public getType(): MiaRouteType {
-        return this.type;
-    }
-
-    public getPath(): string {
-        return this.path;
-    }
-
-    public getName() : string {
-        return this.name;
-    }
-
     public treat(server: T, req: Request, res: Response): void {
         const id: string = uuid();
-        const context = new MiaContext<T>(server, this, id);
+        const context = new MiaContext<T>(server, this, id, req, res);
         try {
             context._log(">>", "Start");
-            this.handle(context, req, res);
+            this.handle(context);
             context._log("<<", "End");
         }
         catch (error) {
-            context._log("!!", `Error ${error}`);
+            const err = `Internal error detected: ${error}`;
+            context._log("!!", err);
+            console.error(error);
+            res.status(500).send(err);
         }
     }
-
-
-    public abstract handle(context: MiaContext<T>, req: Request, res: Response) : void;
+ 
+    public abstract handle(context: MiaContext<T>) : void;
 
 }
 

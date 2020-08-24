@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 
 import { MiaRoute, MiaRouteType } from "../src/route.class";
 import { MiaContext } from "../src/context.class";
@@ -10,24 +9,21 @@ class MyLoginRoute extends MiaRoute<MyServer> {
         super("myloginroute", MiaRouteType.POST, "/login");
     }
 
-    public async handle(context : MiaContext<MyServer>, request: Request, response: Response) : Promise<void> {
-        const server = context.getServer();
+    public handle(context : MiaContext<MyServer>) : void {
+        const server = context.server;
         const authService = server.getMyAuthenticationService();
-        if (!authService) {
-            response.status(500).send("myauthenticationservice not found");
-            return;
-        }
-        const email = request.header("email");
-        const password = request.header("password");
+ 
+        const email = context.getHeader("email");
+        const password = context.getHeader("password");
         
         context.log(`Trying login for ${email}`);
         
         const token = authService.authenticate(email, password);
         if (!token) {
-            response.status(404).send("Bad user or password");
+            context.sendError(404, "Bad user or password");
             return; 
         }
-        response.status(200).send({"token": token});
+        context.sendObject({"token": token});
     }
 }
 

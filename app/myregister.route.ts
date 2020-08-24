@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 
 import { MiaRoute, MiaRouteType } from "../src/route.class";
 import { MiaContext } from "../src/context.class";
@@ -11,19 +10,19 @@ class MyRegisterRoute extends MiaRoute<MyServer> {
         super("myregisterroute", MiaRouteType.POST, "/register");
     }
 
-    public handle(context: MiaContext<MyServer>, request: Request, response: Response) {
-        const server = context.getServer();
+    public handle(context: MiaContext<MyServer>) {
+        const server = context.server;
         const userService = server.getMyUserService();
-        if (!userService) {
-            response.status(500).send("service not found");
+ 
+        const email = context.getHeader("email");
+        const name = context.getHeader("name");
+        const password = context.getHeader("password");
+        if (!email || !name || !password) {
+            context.sendError(400, "No email, name, or password found for registration");
             return;
         }
-        const email = request.header("email");
-        const name = request.header("name");
-        const password = request.header("password");
 
         context.log(`Trying registration for ${name} :: ${email}`);
-
         const user = new MyUser();
         user.name = name;
         user.email = email;
@@ -33,11 +32,11 @@ class MyRegisterRoute extends MiaRoute<MyServer> {
             if (ok) {
                 const msg = `User ${name} / ${email} created!`;
                 context.log(msg);
-                response.status(200).send({ "email": email });
+                context.sendObject({ "email": email });
             }
             else {
                 context.log(err);
-                response.status(400).send({ "error": err });
+                context.sendError(400, err);
             }
         });
     };

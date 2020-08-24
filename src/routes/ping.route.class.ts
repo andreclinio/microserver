@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 
 import { MiaRouteType, MiaRoute } from "../route.class";
 import { MiaContext } from '../context.class';
@@ -11,8 +10,8 @@ class PingRoute<T extends MiaServer> extends MiaRoute<T> {
         super("pingroute", MiaRouteType.GET, "/ping");
     }
 
-    public async handle(_context : MiaContext<T>, _request: Request, response: Response) : Promise<void> {
-        response.send("pong\n");
+    public  handle(context : MiaContext<T>) : void {
+        context.sendText("pong");
     }
 }
 

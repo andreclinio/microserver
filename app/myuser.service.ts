@@ -1,14 +1,17 @@
-import * as mongoose from "mongoose";
-import { from, Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { Observable, of, Observer } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+
+import { v4 } from 'uuid';
 
 import { MyServer } from './myserver';
 import { MiaService } from '../src/services/service.class';
 import { MyMongoService } from './mymongo.service';
+import { Schema } from "mongoose";
 
 class MyUser {
-    public name: string | undefined;
-    public email: string | undefined;
+
+    public name!: string;
+    public email!: string;
 
     public toJson(): Object {
         const data = { "name": this.name, "email": this.email };
@@ -22,29 +25,39 @@ class MyUser {
         return user;
     }
 
-    public static fromDoc(iuser : IMyUser) : MyUser {
+    public static fromDoc(iuser: MyUserObject): MyUser {
         const user = new MyUser();
-        user.name = iuser.name;
-        user.email = iuser.email;
+        user.name = iuser["name"];
+        user.email = iuser["email"];
         return user;
+    }
+
+    public toDoc(): MyUserObject {
+        return { name: this.name, email: this.email };
     }
 }
 
-interface IMyUser extends mongoose.Document {
-    name: string;
-    email: string;
+interface MyUserObject { name: string, email: string };
+
+class MyUserSchema extends Schema {
+    constructor() {
+        super(
+            {
+                _id: { type: String, default: v4 },
+                name: { type: String, required: true },
+                email: { type: String, required: true },
+            }
+        );
+    }
 };
 
-const MyUserSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-});
+const myUserSchema = new MyUserSchema();
 
-const MyUserModel = mongoose.model<IMyUser>('users', MyUserSchema);
 
 class MyUserService extends MiaService<MyServer> {
 
     private mongoService: MyMongoService;
+    private model!: any;
 
     constructor(server: MyServer, mongoservice: MyMongoService) {
         super(MyUserService.getName(), server);
@@ -56,22 +69,33 @@ class MyUserService extends MiaService<MyServer> {
     }
 
     public start(): void {
-        this.mongoService.addModel("users", MyUserSchema);
+        this.model = this.mongoService.addModel("MyUserModel", myUserSchema, "users");
     }
 
     public getAllUsers(): Observable<MyUser[]> {
-        let allUsers : MyUser[] = [];
-        MyUserModel.find({}, (err, users) => {
-            console.log("***", err);
-            if (err) allUsers = [];
-            else users.forEach(u => allUsers.push(MyUser.fromDoc(u)));
+        const observable = Observable.create((observer: Observer<MyUser[]>) => {
+            this.model.find({}, (err: any, result: MyUserObject[]) => {
+                if (err != null) observer.error(err);
+                const users: MyUser[] = [];
+                result.forEach(r => {
+                    users.push(MyUser.fromDoc(r));
+                });
+                observer.next(users);
+                observer.complete();
+            });
         });
-        return of(allUsers);
+        return observable;
     }
 
-    public hasEmail(email: string | undefined): Observable<boolean> {
+    public hasEmail(email: string): Observable<boolean> {
         if (!email) return of<boolean>(false);
-        return from(MyUserModel.exists({ email: email }));
+        return Observable.create((observer: Observer<boolean>) => {
+            this.model.find({ email: email }, (err: any, result: Object[]) => {
+                if (err != null) observer.error(err);
+                observer.next(result.length > 0);
+                observer.complete();
+            });
+        });
     }
 
     public createUser(user: MyUser, password: string | undefined): Observable<[boolean, string]> {
@@ -82,16 +106,16 @@ class MyUserService extends MiaService<MyServer> {
         if (!password) return of([false, "No password informed."]);
 
         const hasEmailOb = this.hasEmail(email);
-        const userModel = new MyUserModel({ email: email, name: name });
-        const saveUserOb = from(userModel.save());
-        const createUserOb = saveUserOb.pipe(map(u => {
-            const x : [boolean, string] = [true, `User created: ${u.email}`];
-            return x;
-        }));
+        const createUserOb: Observable<[boolean, string]> = Observable.create((observer: Observer<[boolean, string]>) => {
+            const userModel = new this.model(user.toDoc());
+            userModel.save();
+            observer.next([true, `User created: ${userModel}`]);
+            observer.complete();
+        });
 
         const ob = hasEmailOb.pipe(mergeMap(has => {
             if (has) {
-                const x : [boolean, string] = [false, "User with email already exists."];
+                const x: [boolean, string] = [false, "User with email already exists."];
                 return of(x);
             }
             else return createUserOb;

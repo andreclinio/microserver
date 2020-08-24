@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 
 import { MiaRoute, MiaRouteType } from "../src/route.class";
 import { MiaContext } from "../src/context.class";
@@ -10,16 +9,11 @@ class MyGetUsersRoute extends MiaRoute<MyServer> {
         super("mygetusers", MiaRouteType.GET, "/users");
     }
 
-    public handle(context: MiaContext<MyServer>, _request: Request, response: Response) {
-        const server = context.getServer();
-        const userService = server.getMyUserService();
-        if (!userService) {
-            response.status(500).send("service not found");
-            return;
-        }
-  
+    public handle(context: MiaContext<MyServer>) {
+        const server = context.server;
+        const userService = server.getMyUserService(); 
         userService.getAllUsers().subscribe(users => {
-            response.status(200).send(users);
+            context.sendObject(users);
         });
     };
 }

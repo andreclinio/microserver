@@ -14,18 +14,18 @@ class MiaServer {
     public start(): void {
         try {
             this.services.forEach(s => {
-                this.log(`Starting service ${s.getName()}...`);
+                this.log(`Starting service [${s.getName()}]...`);
                 s.start()
-                this.log(`Service ${s.getName()} started`);
+                this.log(`Service [${s.getName()}] started`);
             });
         }
         catch (error) {
-            this.log(`Server start failed: ${error}`);
+            this.log(`Server start failure! -- ${error}`);
             throw (error);
         }
 
         this.server.listen(this.port, () => {
-            this.log(`Running port ${this.port}`);
+            this.log(`Server is now running on port [${this.port}]`);
         });
     }
 
@@ -34,8 +34,8 @@ class MiaServer {
     }
 
     public addRoute(route: MiaRoute<MiaServer>) {
-        const type = route.getType();
-        const path = route.getPath();
+        const type = route.type;
+        const path = route.path;
         const treatment = (req: Request, res: Response) => {
             try {
                 route.treat(this, req, res);

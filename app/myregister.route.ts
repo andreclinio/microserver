@@ -22,19 +22,18 @@ class MyRegisterRoute extends MiaRoute<MyServer> {
             return;
         }
 
-        context.log(`Trying registration for ${name} :: ${email}`);
-        const user = new MyUser();
-        user.name = name;
-        user.email = email;
-        userService.createUser(user, password).subscribe(tuple => {
-            const ok = tuple[0];
-            const err = tuple[1];
-            if (ok) {
-                const msg = `User ${name} / ${email} created!`;
+        context.log(`Trying registration for [${name}::${email}]`);
+        const user = new MyUser(name, email);
+        userService.createUser(user, password).subscribe(result => {
+            const uid = result[0];
+            if (uid) {
+                const msg = `User ${uid} for [${name} ::${email}] created!`;
                 context.log(msg);
-                context.sendObject({ "email": email });
+                context.sendObject({ "email": email, "uid" : uid });
             }
             else {
+                const error = result[1];
+                const err = `User for [${name}::${email}] not created! -- ${error}`;
                 context.log(err);
                 context.sendError(400, err);
             }

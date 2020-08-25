@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { MyServer } from './myserver';
 import { MiaService } from '../src/services/service.class';
 import { MyMongoService } from './mymongo.service';
+import { MyHashService } from './myhash.service';
 
 interface MyUserObject { name: string, email: string };
 
@@ -39,12 +40,12 @@ const myAdressSchema = new Schema({
 });
 
 const myPasswordSchema = new Schema({
-    _id: { type: String, required: true, unique: true, index: true },
+    _id: { type: String },
     password: { type: String, required: true }
 });
 
 const myUserSchema = new Schema({
-    _id: { type: String, default: v4},
+    _id: { type: String, default: v4 },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
     registrationData: { type: Date, default: Date.now },
@@ -54,14 +55,17 @@ const myUserSchema = new Schema({
 
 class MyUserService extends MiaService<MyServer> {
 
-    private mongoService: MyMongoService;
+    private mongoService!: MyMongoService;
+    private hashService!: MyHashService;
+
     private userModel!: any;
     private passwordModel!: any;
 
 
-    constructor(server: MyServer, mongoservice: MyMongoService) {
+    constructor(server: MyServer, mongoService: MyMongoService, hashService: MyHashService) {
         super(MyUserService.getName(), server);
-        this.mongoService = mongoservice;
+        this.mongoService = mongoService;
+        this.hashService = hashService;
     }
 
     public static getName(): string {
@@ -89,7 +93,7 @@ class MyUserService extends MiaService<MyServer> {
     }
 
 
-    public createUser(user: MyUser, password: string) : Observable<[string| undefined, string | undefined]> {
+    public createUser(user: MyUser, password: string): Observable<[string | undefined, string | undefined]> {
         const email = user.email;
         const name = user.name;
         if (!email) return of([undefined, "No email informed."]);
@@ -98,14 +102,14 @@ class MyUserService extends MiaService<MyServer> {
 
         const ob = this._hasEmail(email).pipe(mergeMap(has => {
             if (has) {
-                const x : [string| undefined, string | undefined] = [undefined, "User with email already exists."];
+                const x: [string | undefined, string | undefined] = [undefined, "User with email already exists."];
                 return of(x);
             }
             else {
                 return this._createUser(name, email).pipe(
                     mergeMap(uid => this._createPassword(uid, password)),
                     mergeMap(uid => {
-                        const x : [string| undefined, string | undefined] = uid ? [uid, "ok"] : [undefined, "no uid!"];
+                        const x: [string | undefined, string | undefined] = uid ? [uid, "ok"] : [undefined, "no uid!"];
                         return of(x);
                     }));
             }
@@ -113,11 +117,40 @@ class MyUserService extends MiaService<MyServer> {
         return ob;
     }
 
-    public changePassword(email: string | undefined, password: string): Observable<string | undefined> {
-        return this._changePassword(email, password);
+    public emailToUserId(email: string) : Observable<string | undefined> {
+        return this._emailToUserId(email);
     }
 
-    private _changePassword(userId: string | undefined, password: string): Observable<string| undefined> {
+    public getHashedPassword(userId: string): Observable<string | undefined> {
+        return this._getHashedPassword(userId);
+    }
+
+    public changePassword(email: string | undefined, password: string): Observable<string | undefined> {
+        return this._hashPassword(password).pipe(mergeMap(pwd => this._changePassword(email, pwd)));
+    }
+
+    private _hashPassword(password: string): Observable<string> {
+        return this.hashService.create(password);
+    }
+
+    private _getHashedPassword(userId: string): Observable<string | undefined> {
+        const ob: Observable<string | undefined> = Observable.create(
+            (observer: Observer<string | undefined>) => {
+                this.passwordModel.findById(userId, (err: any, pwd: any) => {
+                    if (err) {
+                        observer.error(err);
+                        return;
+                    }
+                    if (!pwd) observer.next(undefined)
+                    else observer.next(`${pwd.password}`);
+                    observer.complete();
+                })
+            }
+        );
+        return ob;
+    }
+
+    private _changePassword(userId: string | undefined, password: string): Observable<string | undefined> {
         if (!userId) return of(undefined);
         const ob: Observable<string | undefined> = Observable.create(
             (observer: Observer<string | undefined>) => {
@@ -149,7 +182,14 @@ class MyUserService extends MiaService<MyServer> {
         return ob;
     }
 
-    private _createPassword(userId: string | undefined, password: string): Observable<string| undefined> {
+    private _createPassword(userId: string | undefined, password: string): Observable<string | undefined> {
+        return this._hashPassword(password).pipe(mergeMap(pwd => {
+            this.log(`generated hashed password for [${userId}] as [${pwd}] `);
+            return this._createPasswordEntry(userId, pwd);
+        }));
+    }
+
+    private _createPasswordEntry(userId: string | undefined, password: string): Observable<string | undefined> {
         if (!userId) return of(undefined);
         const ob: Observable<string | undefined> = Observable.create((observer: Observer<string | undefined>) => {
             this.passwordModel.create({ _id: userId, password: password }, (err: any, res: any) => {
@@ -161,6 +201,7 @@ class MyUserService extends MiaService<MyServer> {
                 observer.complete();
             });
         });
+
         return ob;
     }
 
@@ -174,6 +215,17 @@ class MyUserService extends MiaService<MyServer> {
             });
         });
     }
+
+    private _emailToUserId(email: string): Observable<string | undefined> {
+        return Observable.create((observer: Observer<string | undefined>) => {
+            this.userModel.findOne({ email: email }, (err: any, user: any) => {
+                if (err != null) observer.error(err);
+                observer.next(user ? `${user._id}` : undefined);
+                observer.complete();
+            });
+        });
+    }
+
 }
 
 export { MyUserService, MyUser };

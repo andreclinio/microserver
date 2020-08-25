@@ -26,14 +26,13 @@ abstract class MiaRoute<T extends MiaServer> {
         const id: string = uuid();
         const context = new MiaContext<T>(server, this, id, req, res);
         try {
-            context._log(">>", "Start");
+            context.log(">> START");
             this.handle(context);
-            context._log("<<", "End");
+            context.log("<< END");
         }
         catch (error) {
-            const err = `Internal error detected: ${error}`;
-            context._log("!!", err);
-            console.error(error);
+            const err = `!! EXCEPTION: ${error}`;
+            context.log(err);
             res.status(500).send(err);
         }
     }

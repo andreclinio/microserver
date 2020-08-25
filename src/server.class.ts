@@ -33,6 +33,10 @@ class MiaServer {
         console.log(`[MiaServer ${this.name}]: ${message}`)
     }
 
+    public debug(message: string) {
+        console.debug(`[DEBUG --- MiaServer ${this.name}]: ${message}`)
+    }
+
     public addRoute(route: MiaRoute<MiaServer>) {
         const type = route.type;
         const path = route.path;

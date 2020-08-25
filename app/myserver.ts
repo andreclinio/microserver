@@ -1,18 +1,31 @@
 import { MiaServer } from "../src/server.class";
+import { MiaService } from "../src/services/service.class";
+
 import { MyMongoService } from "./mymongo.service";
 import { MyAuthenticationService } from "./myauthentication.service";
 import { MyUserService } from "./myuser.service";
-import { MiaService } from "../src/services/service.class";
+import { MyHashService } from "./myhash.service";
+import { MyTokenService } from "./mytoken.service";
 
 class MyServer extends MiaServer {
 
     constructor() {
         super("myserver", 4000);
-        const mongoservice = new MyMongoService(this);
-        this.addService(mongoservice);
 
-        this.addService(new MyAuthenticationService(this));
-        this.addService(new MyUserService(this, mongoservice));
+        const mongoService = new MyMongoService(this);
+        this.addService(mongoService);
+
+        const hashService = new MyHashService(this);
+        this.addService(hashService);
+
+        const tokenService = new MyTokenService(this);
+        this.addService(tokenService);
+
+        const userService = new MyUserService(this, mongoService, hashService);
+        this.addService(userService);
+
+        const authService = new MyAuthenticationService(this, hashService, tokenService, userService);
+        this.addService(authService);
     }
 
     private getMyService<X extends MiaService<MyServer>>(name: string ): X {

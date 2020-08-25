@@ -1,15 +1,17 @@
 
-import { MiaRoute, MiaRouteType } from "../src/route.class";
+import { MiaRouteType } from "../src/route.class";
 import { MiaContext } from "../src/context.class";
-import { MyServer } from "./myserver";
 
-class MyGetUsersRoute extends MiaRoute<MyServer> {
+import { MyServer } from "./myserver";
+import { MyProtectedRoute} from "./myprotectedroute.class";
+
+class MyGetUsersRoute extends MyProtectedRoute {
 
     constructor() {
         super("mygetusers", MiaRouteType.GET, "/users");
     }
 
-    public handle(context: MiaContext<MyServer>) {
+    public handleX(context: MiaContext<MyServer>, _userId: string) {
         const server = context.server;
         const userService = server.getMyUserService(); 
         userService.getAllUsers().subscribe(users => {

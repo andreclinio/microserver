@@ -20,13 +20,13 @@ class MiaContext<T extends MiaServer> {
         this.response = response;
     }
 
-    public log(message: string): void {
-        this._log("--", message);
+    public debug(message: string) : void {
+        this.server.debug(` [${name}]: [${this.id}] -  ${message} `);
     }
 
-    public _log(flag: string, message: string): void {
+    public log(message: string): void {
         const name = this.route.name;
-        this.server.log(` [${name}]: (${flag} ${this.id}) - ` + message);
+        this.server.log(` [${name}]: [${this.id}] - ${message}`);
     }
 
     public getHeader(paramName: string) : string | undefined {

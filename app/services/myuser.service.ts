@@ -92,6 +92,9 @@ class MyUserService extends TsbService<MyServer> {
         return observable;
     }
 
+    public getUser(userId: string): Observable<MyUser> {
+        return this._getUser(userId);
+    }
 
     public createUser(user: MyUser, password: string): Observable<[string | undefined, string | undefined]> {
         const email = user.email;
@@ -225,6 +228,18 @@ class MyUserService extends TsbService<MyServer> {
             });
         });
     }
+
+    private _getUser(userId: string): Observable<MyUser> {
+        const observable = Observable.create((observer: Observer<MyUser>) => {
+            this.userModel.findOne({ _id: userId}, (err: any, result: MyUserObject) => {
+                if (err != null) observer.error(err);
+                observer.next(MyUser.fromObject(result));
+                observer.complete();
+            });
+        });
+        return observable;
+    }
+
 
 }
 

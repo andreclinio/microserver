@@ -4,7 +4,7 @@ import { MyServer } from '../server/myserver';
 class MyMongoService extends TsbMongoService<MyServer> {
 
     constructor(server: MyServer) {
-        const uri = 'mongodb://myserver:myserver@localhost:27017/myserver';
+        const uri = 'mongodb://myuser:mypassword@localhost:27017/mybase';
         super(MyMongoService.getName(), server, uri);
     }
 

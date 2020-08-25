@@ -2,7 +2,7 @@ version: "3"
 services:
   mongo:
     image: mongo
-    container_name: "miaserver-mongo"
+    container_name: "tsbase-mongo"
     restart: "always"
     volumes:
       - ./.dbcache/mongo/data:/data/db
@@ -16,7 +16,7 @@ services:
 
   redis:
     image: redis:6.0-alpine
-    container_name: "miaserver-redis"
+    container_name: "tsbase-redis"
     ports:
       - "6379:6379"
     networks:

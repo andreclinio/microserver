@@ -4,8 +4,8 @@ import { Schema } from "mongoose";
 
 import { v4 } from 'uuid';
 
-import { MyServer } from './myserver';
-import { MiaService } from '../src/services/service.class';
+import { MyServer } from '../server/myserver';
+import { TsbService } from '../../src/services/service.class';
 import { MyMongoService } from './mymongo.service';
 import { MyHashService } from './myhash.service';
 
@@ -53,7 +53,7 @@ const myUserSchema = new Schema({
 });
 
 
-class MyUserService extends MiaService<MyServer> {
+class MyUserService extends TsbService<MyServer> {
 
     private mongoService!: MyMongoService;
     private hashService!: MyHashService;

@@ -1,15 +1,15 @@
 import express, { Application } from "express";
 import { Request, Response } from 'express';
 
-import { MiaRoute, MiaRouteType } from "./route.class";
-import { MiaService } from "./services/service.class";
+import { TsbRoute, TsbRouteType } from "./route.class";
+import { TsbService } from "./services/service.class";
 
-class MiaServer {
+class TsbServer {
 
-    private server: Application;
-    private port: number;
-    private name: string;
-    private services: Map<string, MiaService<MiaServer>>;
+    private server!: Application;
+    private port!: number;
+    private name!: string;
+    private services: Map<string, TsbService<TsbServer>>;
 
     public start(): void {
         try {
@@ -30,14 +30,14 @@ class MiaServer {
     }
 
     public log(message: string) {
-        console.log(`[MiaServer ${this.name}]: ${message}`)
+        console.log(`[${this.name}]: ${message}`)
     }
 
     public debug(message: string) {
-        console.debug(`[DEBUG --- MiaServer ${this.name}]: ${message}`)
+        console.debug(`[DEBUG --- ${this.name}]: ${message}`)
     }
 
-    public addRoute(route: MiaRoute<MiaServer>) {
+    public addRoute(route: TsbRoute<TsbServer>) {
         const type = route.type;
         const path = route.path;
         const treatment = (req: Request, res: Response) => {
@@ -51,13 +51,13 @@ class MiaServer {
         };
 
         switch (type) {
-            case MiaRouteType.GET:
+            case TsbRouteType.GET:
                 this.server.get(path, treatment);
                 break;
-            case MiaRouteType.PUT:
+            case TsbRouteType.PUT:
                 this.server.put(path, treatment);
                 break;
-            case MiaRouteType.POST:
+            case TsbRouteType.POST:
                 this.server.post(path, treatment);
                 break;
             default:
@@ -65,12 +65,12 @@ class MiaServer {
         }
     }
 
-    public addService(service: MiaService<MiaServer>) {
+    public addService(service: TsbService<TsbServer>) {
         const name = service.getName();
         this.services.set(name, service);
     }
 
-    public getServiceByName(name: string) : MiaService<MiaServer> | undefined{
+    public getServiceByName(name: string) : TsbService<TsbServer> | undefined{
         const service = this.services.get(name);
         return service;
     }
@@ -83,4 +83,4 @@ class MiaServer {
     }
 }
 
-export { MiaServer };
+export { TsbServer };

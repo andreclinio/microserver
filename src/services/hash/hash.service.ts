@@ -2,11 +2,11 @@
 import { Observable, from } from "rxjs";
 import { hash, compare } from "bcryptjs";
 
-import { MiaServer } from "../../server.class";
-import { MiaService } from "../service.class";
+import { TsbServer } from "../../server.class";
+import { TsbService } from "../service.class";
 
 
-class MtsHashService<T extends MiaServer> extends MiaService<T> {
+class TsbHashService<T extends TsbServer> extends TsbService<T> {
 
     private salt!: number | string;
 
@@ -27,4 +27,4 @@ class MtsHashService<T extends MiaServer> extends MiaService<T> {
     }
 }
 
-export { MtsHashService };
+export { TsbHashService };

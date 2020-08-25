@@ -1,11 +1,11 @@
 
 const mongoose = require('mongoose');
 
-import { MiaServer } from "../../server.class";
-import { MiaService } from "../service.class";
+import { TsbServer } from "../../server.class";
+import { TsbService } from "../service.class";
 import { Schema, Connection, Model, Document } from "mongoose";
 
-class MongoService<T extends MiaServer> extends MiaService<T> {
+class TsbMongoService<T extends TsbServer> extends TsbService<T> {
 
     private uri: string;
     private connection?: Connection;
@@ -37,4 +37,4 @@ class MongoService<T extends MiaServer> extends MiaService<T> {
     }
 }
 
-export { MongoService };
+export { TsbMongoService };

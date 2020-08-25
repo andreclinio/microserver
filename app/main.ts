@@ -1,11 +1,11 @@
 
 
 import { PingRoute } from '../src/routes/ping.route.class';
-import { MyRegisterRoute } from './myregister.route';
-import { MyGetUsersRoute } from './mygetusers.route'
-import { MyLoginRoute } from './mylogin.route';
+import { MyRegisterRoute } from './routes/myregister.route';
+import { MyGetUsersRoute } from './routes/mygetusers.route'
+import { MyLoginRoute } from './routes/mylogin.route';
 
-import { MyServer } from './myserver';
+import { MyServer } from './server/myserver';
 
 const server = new MyServer();
 server.addRoute(new PingRoute());

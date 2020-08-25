@@ -1,13 +1,13 @@
-import { MiaServer } from "../src/server.class";
-import { MiaService } from "../src/services/service.class";
+import { TsbServer } from "../../src/server.class";
+import { TsbService } from "../../src/services/service.class";
 
-import { MyMongoService } from "./mymongo.service";
-import { MyAuthenticationService } from "./myauthentication.service";
-import { MyUserService } from "./myuser.service";
-import { MyHashService } from "./myhash.service";
-import { MyTokenService } from "./mytoken.service";
+import { MyMongoService } from "../services/mymongo.service";
+import { MyAuthenticationService } from "../services/myauthentication.service";
+import { MyUserService } from "../services/myuser.service";
+import { MyHashService } from "../services/myhash.service";
+import { MyTokenService } from "../services/mytoken.service";
 
-class MyServer extends MiaServer {
+class MyServer extends TsbServer {
 
     constructor() {
         super("myserver", 4000);
@@ -28,7 +28,7 @@ class MyServer extends MiaServer {
         this.addService(authService);
     }
 
-    private getMyService<X extends MiaService<MyServer>>(name: string ): X {
+    private getMyService<X extends TsbService<MyServer>>(name: string ): X {
         const srv = this.getServiceByName(name);
         if (!srv) throw new Error(`Service $name not found!`);
         return srv as X;
@@ -44,6 +44,10 @@ class MyServer extends MiaServer {
 
     public getMyUserService() : MyUserService {
         return (this.getMyService(MyUserService.getName()) as MyUserService);
+    }
+
+    public getMyTokenService() : MyTokenService {
+        return (this.getMyService(MyTokenService.getName()) as MyTokenService);
     }
 };
 

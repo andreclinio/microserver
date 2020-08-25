@@ -1,16 +1,16 @@
 
-import { MiaRoute, MiaRouteType } from "../src/route.class";
-import { MiaContext } from "../src/context.class";
-import { MyServer } from "./myserver";
-import { MyUser } from './myuser.service';
+import { TsbRoute, TsbRouteType } from "../../src/route.class";
+import { TsbContext } from "../../src/context.class";
+import { MyServer } from "../server/myserver";
+import { MyUser } from '../services/myuser.service';
 
-class MyRegisterRoute extends MiaRoute<MyServer> {
+class MyRegisterRoute extends TsbRoute<MyServer> {
 
     constructor() {
-        super("myregisterroute", MiaRouteType.POST, "/register");
+        super("myregisterroute", TsbRouteType.POST, "/register");
     }
 
-    public handle(context: MiaContext<MyServer>) {
+    public handle(context: TsbContext<MyServer>) {
         const server = context.server;
         const userService = server.getMyUserService();
  

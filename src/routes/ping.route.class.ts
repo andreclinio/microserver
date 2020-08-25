@@ -1,16 +1,16 @@
 
-import { MiaRouteType, MiaRoute } from "../route.class";
-import { MiaContext } from '../context.class';
-import { MiaServer } from '../server.class';
+import { TsbRouteType, TsbRoute } from "../route.class";
+import { TsbContext } from '../context.class';
+import { TsbServer } from '../server.class';
 
 
-class PingRoute<T extends MiaServer> extends MiaRoute<T> {
+class PingRoute<T extends TsbServer> extends TsbRoute<T> {
 
     constructor() {
-        super("pingroute", MiaRouteType.GET, "/ping");
+        super("pingroute", TsbRouteType.GET, "/ping");
     }
 
-    public  handle(context : MiaContext<T>) : void {
+    public  handle(context : TsbContext<T>) : void {
         context.sendText("pong");
     }
 }

@@ -1,10 +1,10 @@
 
 
-import { MiaServer } from "../../server.class";
-import { MiaService } from "../service.class";
+import { TsbServer } from "../../server.class";
+import { TsbService } from "../service.class";
 import { Observable } from "rxjs";
 
-abstract class AuthenticationService<T extends MiaServer> extends MiaService<T> {
+abstract class TsbAuthenticationService<T extends TsbServer> extends TsbService<T> {
 
     constructor(name: string, server: T) {
         super(name, server);
@@ -16,4 +16,4 @@ abstract class AuthenticationService<T extends MiaServer> extends MiaService<T> 
 
 }
 
-export { AuthenticationService };
+export { TsbAuthenticationService };

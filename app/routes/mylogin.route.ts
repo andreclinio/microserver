@@ -1,17 +1,17 @@
 
-import { MiaRoute, MiaRouteType } from "../src/route.class";
-import { MiaContext } from "../src/context.class";
-import { MyServer } from "./myserver";
+import { TsbRoute, TsbRouteType } from "../../src/route.class";
+import { TsbContext } from "../../src/context.class";
+import { MyServer } from "../server/myserver";
 import { mergeMap } from "rxjs/operators";
 import { of, Observable } from "rxjs";
 
-class MyLoginRoute extends MiaRoute<MyServer> {
+class MyLoginRoute extends TsbRoute<MyServer> {
 
     constructor() {
-        super("myloginroute", MiaRouteType.POST, "/login");
+        super("myloginroute", TsbRouteType.POST, "/login");
     }
 
-    public handle(context : MiaContext<MyServer>) : void {
+    public handle(context : TsbContext<MyServer>) : void {
         const email = context.getHeader("email");
         const password = context.getHeader("password");
         if (!email || !password) {
@@ -30,7 +30,7 @@ class MyLoginRoute extends MiaRoute<MyServer> {
         });
     }
 
-    private _authenticate(context: MiaContext<MyServer>, email: string, password: string ) : Observable<string | undefined> {
+    private _authenticate(context: TsbContext<MyServer>, email: string, password: string ) : Observable<string | undefined> {
         const server = context.server;
         const authService = server.getMyAuthenticationService();
         const userService = server.getMyUserService();

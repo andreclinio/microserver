@@ -1,12 +1,12 @@
-import { MyServer } from "./myserver";
-import { AuthenticationService } from "../src/services/authentication/authentication.service";
+import { MyServer } from "../server/myserver";
+import { TsbAuthenticationService } from "../../src/services/authentication/authentication.service";
 import { MyHashService } from "./myhash.service";
 import { MyUserService } from "./myuser.service";
 import { Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { MyTokenService } from "./mytoken.service";
 
-class MyAuthenticationService extends AuthenticationService<MyServer> {
+class MyAuthenticationService extends TsbAuthenticationService<MyServer> {
 
     private hashService!: MyHashService;
     private userService!: MyUserService;

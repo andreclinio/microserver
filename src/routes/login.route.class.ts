@@ -1,17 +1,17 @@
 
-import { MiaRouteType, MiaRoute } from "../route.class";
-import { MiaContext } from '../context.class';
-import { MiaServer } from '../server.class';
+import { TsbRouteType, TsbRoute } from "../route.class";
+import { TsbContext } from '../context.class';
+import { TsbServer } from '../server.class';
 
 
 
-class LoginRoute<T extends MiaServer> extends MiaRoute<T> {
+class LoginRoute<T extends TsbServer> extends TsbRoute<T> {
 
     constructor() {
-        super("loginroute", MiaRouteType.POST, "/login");
+        super("loginroute", TsbRouteType.POST, "/login");
     }
 
-    public handle(context : MiaContext<T>) : void {
+    public handle(context : TsbContext<T>) : void {
         context.sendNotImplemented();
     }
 }

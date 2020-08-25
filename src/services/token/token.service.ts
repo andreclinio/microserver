@@ -1,22 +1,22 @@
 
 
-import { MiaServer } from "../../server.class";
-import { MiaService } from "../service.class";
+import { TsbServer } from "../../server.class";
+import { TsbService } from "../service.class";
 import { Observable, Observer } from "rxjs";
 var jwt = require('jsonwebtoken');
 
-enum MtsTokenAlgorithm {
+enum TsbTokenAlgorithm {
     HS256 = "HS256"
 };
 
-class MtsTokenService<T extends MiaServer> extends MiaService<T> {
+class TsbTokenService<T extends TsbServer> extends TsbService<T> {
 
     private secret!: string;
-    private algorithm!: MtsTokenAlgorithm;
+    private algorithm!: TsbTokenAlgorithm;
 
     readonly ONE_HOUR: number = 3600;
 
-    constructor(name: string, server: T, secret: string, algorithm: MtsTokenAlgorithm) {
+    constructor(name: string, server: T, secret: string, algorithm: TsbTokenAlgorithm) {
         super(name, server);
         this.secret = secret;
         this.algorithm = algorithm;
@@ -35,6 +35,10 @@ class MtsTokenService<T extends MiaServer> extends MiaService<T> {
         return this._generate(jwtData);
     }
 
+    public verify(token: string) : Observable<Object> {
+        return this._verify(token);
+    }
+
     private _generate(data: { iss: string, sub: string, data: Object, exp: number }): Observable<string> {
         const ob = Observable.create((observer : Observer<string>) => {
             jwt.sign(data, this.secret, { algorithm: this.algorithm }, (err: any, token: string) => {
@@ -49,6 +53,20 @@ class MtsTokenService<T extends MiaServer> extends MiaService<T> {
         return ob;
     }
 
+    private _verify(token: string): Observable<Object> {
+        const ob = Observable.create((observer : Observer<Object>) => {
+            jwt.verify(token, this.secret, { algorithm: this.algorithm }, (err: any, data: Object) => {
+                if (err) {
+                    observer.error(err);
+                    return;
+                }
+                observer.next(data);
+                observer.complete();
+            });
+        });
+        return ob;
+    }
+
 }
 
-export { MtsTokenService, MtsTokenAlgorithm };
+export { TsbTokenService, TsbTokenAlgorithm };

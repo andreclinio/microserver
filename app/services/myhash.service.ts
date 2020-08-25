@@ -1,7 +1,7 @@
-import { MtsHashService} from '../src/services/hash/hash.service';
-import { MyServer } from './myserver';
+import { TsbHashService} from '../../src/services/hash/hash.service';
+import { MyServer } from '../server/myserver';
 
-class MyHashService extends MtsHashService<MyServer> {
+class MyHashService extends TsbHashService<MyServer> {
 
     constructor(server: MyServer) {
         super(MyHashService.getName(), server, 10);

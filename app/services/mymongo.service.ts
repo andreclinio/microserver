@@ -1,7 +1,7 @@
-import { MongoService } from '../src/services/mongodb/mongo.service';
-import { MyServer } from './myserver';
+import { TsbMongoService } from '../../src/services/mongodb/mongo.service';
+import { MyServer } from '../server/myserver';
 
-class MyMongoService extends MongoService<MyServer> {
+class MyMongoService extends TsbMongoService<MyServer> {
 
     constructor(server: MyServer) {
         const uri = 'mongodb://myserver:myserver@localhost:27017/myserver';

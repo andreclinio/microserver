@@ -1,9 +1,9 @@
-import { MiaServer } from "../server.class";
+import { TsbServer } from "../server.class";
 
 /**
  * Generic service for the framework
  */
-abstract class MiaService<T extends MiaServer> {
+abstract class TsbService<T extends TsbServer> {
 
     /** Server */
     private server: T;
@@ -43,4 +43,4 @@ abstract class MiaService<T extends MiaServer> {
     }
 }
 
-export { MiaService };
+export { TsbService };

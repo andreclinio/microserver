@@ -1,22 +1,22 @@
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { MiaServer } from "./server.class";
-import { MiaContext} from "./context.class";
+import { TsbServer } from "./server.class";
+import { TsbContext} from "./context.class";
 
-enum MiaRouteType {
+enum TsbRouteType {
     GET,
     POST,
     PUT
 };
 
-abstract class MiaRoute<T extends MiaServer> {
+abstract class TsbRoute<T extends TsbServer> {
 
-    readonly type!: MiaRouteType;
+    readonly type!: TsbRouteType;
     readonly path!: string;
     readonly name!: string;
 
-    constructor(name: string, type: MiaRouteType, path: string) {
+    constructor(name: string, type: TsbRouteType, path: string) {
         this.type = type;
         this.path = path;
         this.name = !name ? "unamed" : name;
@@ -24,7 +24,7 @@ abstract class MiaRoute<T extends MiaServer> {
 
     public treat(server: T, req: Request, res: Response): void {
         const id: string = uuid();
-        const context = new MiaContext<T>(server, this, id, req, res);
+        const context = new TsbContext<T>(server, this, id, req, res);
         try {
             context.log(">> START");
             this.handle(context);
@@ -37,8 +37,8 @@ abstract class MiaRoute<T extends MiaServer> {
         }
     }
  
-    public abstract handle(context: MiaContext<T>) : void;
+    public abstract handle(context: TsbContext<T>) : void;
 
 }
 
-export { MiaRoute, MiaRouteType };
+export { TsbRoute, TsbRouteType };

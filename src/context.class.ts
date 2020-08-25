@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
 
-import { MiaServer } from "./server.class";
-import { MiaRoute } from "./route.class";
+import { TsbServer } from "./server.class";
+import { TsbRoute } from "./route.class";
 
 
-class MiaContext<T extends MiaServer> {
+class TsbContext<T extends TsbServer> {
 
     readonly server!: T;
-    readonly route!: MiaRoute<T>;
+    readonly route!: TsbRoute<T>;
     readonly id!: string;
     readonly request!: Request;
     readonly response!: Response;
 
-    constructor(server: T, route: MiaRoute<T>, id: string, request: Request, response: Response) {
+    constructor(server: T, route: TsbRoute<T>, id: string, request: Request, response: Response) {
         this.server = server;
         this.route = route;
         this.id = id;
@@ -21,6 +21,7 @@ class MiaContext<T extends MiaServer> {
     }
 
     public debug(message: string) : void {
+        const name = this.route.name;
         this.server.debug(` [${name}]: [${this.id}] -  ${message} `);
     }
 
@@ -51,4 +52,4 @@ class MiaContext<T extends MiaServer> {
 
 }
 
-export { MiaContext };
+export { TsbContext };

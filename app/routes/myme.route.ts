@@ -5,6 +5,26 @@ import { TsbContext } from "../../src/context.class";
 import { MyServer } from "../server/myserver";
 import { MyProtectedRoute} from "./myprotectedroute.class";
 
+/** 
+ * @swagger
+ * /users/me:
+ *   get:
+ *     description: return current user information
+ *     parameters:
+ *       - in: header
+ *         name: userId
+ *         schema: 
+ *            type: string
+ *            format: plain
+ *     responses:
+ *       404:
+ *         description: invalid token
+ *       200:
+ *         description: user information will be correctly sent
+ *         schema: 
+ *            type: object
+ *            $ref: '#/definitions/MyUser'      
+ */
 class MyGetMeRoute extends MyProtectedRoute {
 
     constructor() {

@@ -9,7 +9,7 @@ class MyTokenService extends TsbTokenService<MyServer> {
     }
 
     public generateUserToken(userId: string) : Observable<string> {
-        return super.generate(this.getName(), "user", this.ONE_HOUR, {userId: userId});
+        return super.generate(this.getName(), "user", this.ONE_MINUTE, {userId: userId});
     }
 
     public static getName() : string {

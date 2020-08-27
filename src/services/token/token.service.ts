@@ -14,7 +14,8 @@ class TsbTokenService<T extends TsbServer> extends TsbService<T> {
     private secret!: string;
     private algorithm!: TsbTokenAlgorithm;
 
-    readonly ONE_HOUR: number = 3600;
+    readonly ONE_MINUTE: number = 60;
+    readonly ONE_HOUR: number = this.ONE_MINUTE * 60;
 
     constructor(name: string, server: T, secret: string, algorithm: TsbTokenAlgorithm) {
         super(name, server);

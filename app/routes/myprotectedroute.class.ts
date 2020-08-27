@@ -12,28 +12,34 @@ abstract class MyProtectedRoute extends TsbRoute<MyServer> {
         super(name, type, path);
     }
 
-    public handle(context : TsbContext<MyServer>) : void {
+    public handle(context: TsbContext<MyServer>): void {
         const token = context.getHeader("token");
         if (!token) {
             const err = "No token for protected route.";
             context.log(err)
             context.sendError(401, err);
-            return; 
+            return;
         }
-                
-      
-        this._getUserId(context, token).subscribe(uid => {
-            if (!uid) {
-                const err = "Invalid token (no user bound to it).";
+
+
+        this._getUserId(context, token).subscribe(
+            uid => {
+                if (!uid) {
+                    const err = "Invalid token (no user bound to it).";
+                    context.log(err)
+                    context.sendError(401, err);
+                    return;
+                }
+                this.handleX(context, uid);
+            },
+            error => {
+                const err = `Bad token (${error}).`;
                 context.log(err)
                 context.sendError(401, err);
-                return;
-            }
-            this.handleX(context, uid);    
-        });
+            });
     }
 
-    private _getUserId(context : TsbContext<MyServer>, token: string) : Observable<string | undefined> {
+    private _getUserId(context: TsbContext<MyServer>, token: string): Observable<string | undefined> {
         const server = context.server;
         const tokenService = server.getMyTokenService();
         return tokenService.verify(token).pipe(
@@ -41,13 +47,13 @@ abstract class MyProtectedRoute extends TsbRoute<MyServer> {
         );
     }
 
-    private _findUserId(object: Object) : string | undefined{
-        const o = object as {data : {userId: string}};
+    private _findUserId(object: Object): string | undefined {
+        const o = object as { data: { userId: string } };
         if (!o.data) return undefined;
         return o.data.userId;
     }
 
-    protected abstract handleX(context: TsbContext<MyServer>, userId: string) : void;
+    protected abstract handleX(context: TsbContext<MyServer>, userId: string): void;
 
 }
 

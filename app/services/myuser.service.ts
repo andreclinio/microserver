@@ -8,29 +8,8 @@ import { MyServer } from '../server/myserver';
 import { TsbService } from '../../src/services/service.class';
 import { MyMongoService } from './mymongo.service';
 import { MyHashService } from './myhash.service';
+import { MyUser, MyUserObject} from '../logic/myuser.class'
 
-interface MyUserObject { name: string, email: string };
-
-
-class MyUser {
-
-    public name!: string;
-    public email!: string;
-
-    public constructor(name: string, email: string) {
-        this.name = name;
-        this.email = email;
-    }
-
-    public static fromObject(iuser: MyUserObject): MyUser {
-        const user = new MyUser(iuser['name'], iuser['email']);
-        return user;
-    }
-
-    public toObject(): MyUserObject {
-        return { name: this.name, email: this.email };
-    }
-}
 
 const myAdressSchema = new Schema({
     street: { type: String, required: true },

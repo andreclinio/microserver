@@ -8,7 +8,8 @@
     "tsc": "tsc",
     "dev": "nodemon --watch \"src\" --watch \"app\" --exec \"ts-node app/main.ts\" -e ts",
     "build": "tsc",
-    "prod": "npm run build && node dist/main.js"
+    "prod": "npm run build && node dist/main.js",
+    "swagger": "./node_modules/swagger-jsdoc/bin/swagger-jsdoc.js -d app/swagger-def.js -o app/swagger-docs.json \"app/**/**/*ts\" "
   },
   "repository": {
     "type": "git",
@@ -33,10 +34,12 @@
     "@types/uuid": "^8.3.0",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "express-swaggerize-ui": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.0",
     "nodemon": "^2.0.4",
     "rxjs": "^6.6.2",
+    "swagger-jsdoc": "^4.0.0",
     "ts-node": "^8.10.2",
     "typescript": "^4.0.2",
     "uuid": "^8.3.0"
